@@ -1,10 +1,12 @@
-var Player = function(scene) {
+var Player = function(scene, startPosition) {
     var that = {};
 
     var UP = 0;
     var DOWN = 1;
     var LEFT = 2;
     var RIGHT = 3;
+    
+    var input = playerInput();
 
 	/*
 	* Creates snake
@@ -13,8 +15,8 @@ var Player = function(scene) {
         var head = new THREE.Mesh(geometry, material);
         
         // Start in middle of screen facing right
-        head.position.x = 0;
-        head.position.y = 0;
+        head.position.x = startPosition.x;
+        head.position.y = startPosition.y;
         scene.add(head);
         snake.push(head);
         
@@ -34,12 +36,19 @@ var Player = function(scene) {
 	var manhattanDistance = function(pos1, pos2) {
 		return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y);
 	};
+    
+    var pythagorasDistance = function(pos1, pos2) {
+        var dx = pos2.x - pos1.x;
+        var dy = pos2.y - pos1.y;
+        
+        return Math.sqrt(dx*dx + dy*dy);
+    };
 	
 	/*
 	* Returns if player collides with fruit = distance < fruit radius
 	*/
 	that.collidesWith = function(fruit) {
-		return (fruit && manhattanDistance(snake[0].position, fruit.getPosition()) < fruit.getRadius());
+		return (fruit && pythagorasDistance(snake[0].position, fruit.getPosition()) < fruit.getRadius());
 	};
 	
 	/*
@@ -48,17 +57,19 @@ var Player = function(scene) {
 	that.addBody = function() {
 		add = true;
 		// 5 % faster 
-		timeBetweenFrames -= timeBetweenFrames * 0.05;
+		timeBetweenFrames -= 0.002;
 	};
 
-	var timeBetweenFrames = 1/25;
+	var timeBetweenFrames = 1/15;
     var timeSinceLastFrame = timeBetweenFrames;
 	var lastFrame = Date.now();  // Not IE? 
 	
 	/*
 	* Update
 	*/	
-    that.update = function(input) {	
+    that.update = function() {
+        input.update();  // This needed?
+        
         // Calculate time since the last frame
         var thisFrame = Date.now();
         var dt = (thisFrame - lastFrame) / 1000;
@@ -70,7 +81,7 @@ var Player = function(scene) {
 			timeSinceLastFrame = timeBetweenFrames;
 			
 			if (dead) {
-				updateDeath();
+				updateDeathAnimation();
 				return;
 			}
 			
@@ -137,7 +148,7 @@ var Player = function(scene) {
 		}
     };
 	
-	var updateDeath = function() {
+	var updateDeathAnimation = function() {
 		var length = snake.length;
 		for (var i=0; i<length; i++) {
 			var bodyPart = snake[i];
@@ -152,7 +163,11 @@ var Player = function(scene) {
 		material.color.setHSV(time % 1, 1, 1);
 	};
 	
-	var die = function() {
+	that.die = function() {
+        if (dead) {
+            return;
+        }
+        
 		var length = snake.length;
 		
 		var head = snake[0];
@@ -172,8 +187,10 @@ var Player = function(scene) {
 		// Show game over box
 		$('#gameover span').html($('#score span').html());
 		$('#gameover').show('slow');
-	}
-	
+	};
+    
+    that.getPosition = function() { return snake[0].position; };    
+    
 	// Snake color, material etc
     var snake = [];
 	var TILE_SIZE = 4;
@@ -184,8 +201,7 @@ var Player = function(scene) {
 	var add = false;
 	var dead = false;
 	
-	createSnake(3);   
-	var lastUpdate = new Date();
+	createSnake(3);
 	
     return that;
 };

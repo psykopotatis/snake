@@ -1,7 +1,7 @@
 /*
 * Creates 30.000 random placed, rotating color-changing particles.
 */	
-var Particles = function(scene) {
+var starField = function(scene) {
     var that = {};
 	
 	var geometry = new THREE.Geometry();
@@ -18,9 +18,9 @@ var Particles = function(scene) {
 	material.color.setHSV(1, 1, 1);
 
 	var particles = new THREE.ParticleSystem(geometry, material);
-	particles.rotation.x = Math.random() * 6;
-	particles.rotation.y = Math.random() * 6;
-	particles.rotation.z = Math.random() * 6;
+	particles.rotation.x = Math.random() * 15;
+	particles.rotation.y = Math.random() * 15;
+	particles.rotation.z = Math.random() * 15;
 
 	scene.add(particles);
 
@@ -29,7 +29,7 @@ var Particles = function(scene) {
 	*/	
     that.update = function() {		
 		var time = Date.now() * 0.00001;
-		particles.rotation.y = time;
+		particles.rotation.y = Date.now() * 0.00005;
 		material.color.setHSV(time % 1, 1, 1);
     };
 	

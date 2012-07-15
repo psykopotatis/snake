@@ -21,8 +21,8 @@
 		#info, #gameover {
 			color: #FFF;
 			position: absolute;
-			left: 100px;
-			top: 100px;
+			left: 200px;
+			top: 180px;
 			font-family: Monospace;
 			padding: 25px;
 			border: 1px solid #FFF;
@@ -40,15 +40,16 @@
 		}
 	</style>
     <script type="text/javascript" src="js/libs/three.js/Three-r49.js"></script>
-	<script type="text/javascript" src="js/libs/three.js/Stats.js"></script>
-	<script type="text/javascript" src="js/libs/three.js/Detector.js"></script>
-	<script type="text/javascript" src="js/libs/jquery-1.7.1.js"></script>
-	<script type="text/javascript" src="js/libs/mouseWheel.js"></script>
-	<script type="text/javascript" src="js/libs/RequestAnimationFrame.js"></script>	
-	<script type="text/javascript" src="js/Input.js"></script>
-	<script type="text/javascript" src="js/Player.js"></script>
-	<script type="text/javascript" src="js/Fruit.js"></script>
-	<script type="text/javascript" src="js/Particles.js"></script>
+    <script type="text/javascript" src="js/libs/three.js/Stats.js"></script>
+    <script type="text/javascript" src="js/libs/three.js/Detector.js"></script>
+    <script type="text/javascript" src="js/libs/jquery-1.7.1.js"></script>
+    <script type="text/javascript" src="js/libs/mouseWheel.js"></script>
+    <script type="text/javascript" src="js/libs/RequestAnimationFrame.js"></script>	
+    <script type="text/javascript" src="js/PlayerInput.js"></script>
+    <script type="text/javascript" src="js/Player.js"></script>
+    <script type="text/javascript" src="js/Fruit.js"></script>
+    <script type="text/javascript" src="js/StarField.js"></script>
+    <script type="text/javascript" src="js/SquareLevel.js"></script>
     <script type="text/javascript">
 		$(document).ready(function() {
 			// Check WebGL
@@ -87,7 +88,7 @@
 				ASPECT = WIDTH / HEIGHT,
 				NEAR = 0.1,
 				FAR = 10000;
-			var CAMERA_POSITION = 300;
+			var CAMERA_POSITION = 250;
 			var TILE_SIZE = 4;
 			// Camera yo
 			var camera =
@@ -98,6 +99,8 @@
 				FAR);
 			// the camera starts at 0,0,0 so pull it back
 			camera.position.z = CAMERA_POSITION;		
+            camera.position.x = 15;	
+            camera.position.y = 10;
 				
 			// Height is 2 x since (0, 0) is in the middle of the screen
 			var DISPLAY_HEIGHT = 2 * CAMERA_POSITION * Math.tan(VIEW_ANGLE / 2 * (Math.PI / 180));
@@ -116,9 +119,11 @@
 			SNAKE.X_MIN = X_MIN;
 			SNAKE.Y_MAX = Y_MAX;
 			SNAKE.Y_MIN = Y_MIN;
+            SNAKE.TILE_SIZE = 4;
 		
 			// Create foggy scene
 			var scene = new THREE.Scene();
+            camera.lookAt(scene.position);  // Look at scene bit from side
 			scene.fog = new THREE.FogExp2( 0x000000, 0.0011);
 			
 			// Add the camera to the scene
@@ -166,11 +171,8 @@
 			}	
 			
 			// Initialize all game components
-			var player = Player(scene);
-			var fruit = Fruit(scene);
-			var particles = Particles(scene);
-			var input = Input();
-			var points = 0;
+			var stars = starField(scene);
+			var level = squareLevel(scene);
 			var started = false;
 			
 			// For camera movement
@@ -217,12 +219,11 @@
 			var update = function() {							
 				requestAnimationFrame(update);
 			
-				// Update all objects
-				input.update();
-				player.update(input);
-				particles.update();
-				fruit.update();
-			
+				stars.update();
+                level.update();
+            
+                /*
+            
 				// Check if snake eat fruit
 				if (player.collidesWith(fruit)) {
 					player.addBody();
@@ -231,6 +232,8 @@
 					scene.remove(fruit.getMesh());
 					fruit.refresh();
 				}
+                
+                */
 				
 				if (moveCamera) {
 					camera.position.x += (mouseX - camera.position.x) * 0.01;
@@ -266,9 +269,7 @@
 					scene.remove(removeMe[i]);
 				}
 				
-				// Create new player and fruit
-				player = Player(scene);
-				fruit = Fruit(scene);
+                level.restart();
 			});
         });
     </script>
@@ -279,7 +280,7 @@
 			WebGL Snake<br /><br/ >
 			Eat the planets and avoid colliding <br />
 			with self or walls.<br />
-			Controls: WASD or arrows up/down/left/right<br />
+			Controls: WASD or arrows up/down/left/right.<br />
 			Camera: Click and drag to move camera.<br />
 			Mouse wheel to zoom in/out.
 			<br /><br />

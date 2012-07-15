@@ -1,12 +1,12 @@
-var Fruit = function(scene, startPosition) {
+var Fruit = function(scene) {
     var that = {};
 	
 	/*
 	* Creates random sized, colored sphere
 	*/	
-	var createSphere = function(position) {
-		var radius = 2;
-		// var position = getRandomPosition(radius);
+	var createSphere = function() {
+		var radius = Math.random() * 20 + 5;  // Mininum radius = 5
+		var position = getRandomPosition(radius);
 		var segments = 30;
 		var rings = 30;
 		var color24 = Math.random()*255 << 16 | Math.random()*255 << 8 | Math.random()*255;
@@ -56,8 +56,8 @@ var Fruit = function(scene, startPosition) {
 	/*
 	* Creates a new fresh fruit
 	*/	
-	that.refresh = function(position) {
-		fruit = createSphere(position);
+	that.refresh = function() {
+		fruit = createSphere();
 	};
 			
 	/*
@@ -71,7 +71,7 @@ var Fruit = function(scene, startPosition) {
 	that.getRadius = function() { return fruit.radius; }
 	that.getMesh = function() { return fruit; }
 	
-	var fruit = createSphere(startPosition);
+	var fruit = createSphere();
 	
     return that;
 };

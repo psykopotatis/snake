@@ -1,4 +1,4 @@
-var Input = function() {
+var playerInput = function() {
 	var that = {};
 
 	that.buttons = [false, false, false, false];
@@ -53,6 +53,7 @@ var Input = function() {
 	
 	that.update = function() {
         for (var i=0; i<that.buttons.length; i++) {
+            // Wut?
             oldButtons[i] = that.buttons[i];
         }
 	}
