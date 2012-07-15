@@ -98,12 +98,14 @@ var Player = function(scene, startPosition) {
 			}
 
 			if (add) {
-				var newBit = new THREE.Mesh(geometry, material);
-				newBit.position.x = head.position.x;
-				newBit.position.y = head.position.y;
-				scene.add(newBit);
-				snake.unshift(newBit);
-				add = false;
+                for (var i=0; i<3; i++) {
+                    var newBit = new THREE.Mesh(geometry, material);
+                    newBit.position.x = head.position.x;
+                    newBit.position.y = head.position.y;
+                    scene.add(newBit);
+                    snake.unshift(newBit);
+                    add = false;
+                }
 			}
 			
 			// Put tail at heads position
@@ -134,11 +136,7 @@ var Player = function(scene, startPosition) {
 			for (var i=1; i<length; i++) {
 				var test = snake[i];
 				if (head.position.x == test.position.x && head.position.y == test.position.y) {
-					die();
-				}
-				if (head.position.x > SNAKE.X_MAX || head.position.x < SNAKE.X_MIN ||
-					head.position.y > SNAKE.Y_MAX || head.position.y < SNAKE.Y_MIN) {
-					die();
+					that.die();
 				}
 			}
 			
@@ -201,7 +199,7 @@ var Player = function(scene, startPosition) {
 	var add = false;
 	var dead = false;
 	
-	createSnake(3);
+	createSnake(4);
 	
     return that;
 };

@@ -1,8 +1,8 @@
 var squareLevel = function(scene) {
     var that = {};
     
-    var X_MIN = -100;
-    var X_MAX = 100;
+    var X_MIN = -80;
+    var X_MAX = 80;
     var Y_MIN = -20;
     var Y_MAX = SNAKE.Y_MAX - 32;
     
