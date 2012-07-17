@@ -1,4 +1,4 @@
-var squareLevel = function(scene) {
+var infinityLevel = function(scene) {
     var that = {};
     
     var X_MIN = -80;
