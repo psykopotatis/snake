@@ -54,12 +54,15 @@ var Player = function(scene, startPosition) {
 	/*
 	* Adds a body part at beginning of snake, before setting tail to head in update
 	*/
-	that.addBody = function() {
+	that.addBody = function(parts) {
 		add = true;
+        bodyParts = parts;
 		// 5 % faster 
 		timeBetweenFrames -= 0.002;
 	};
 
+    var bodyParts;
+    
 	var timeBetweenFrames = 1/15;
     var timeSinceLastFrame = timeBetweenFrames;
 	var lastFrame = Date.now();  // Not IE? 
@@ -98,7 +101,7 @@ var Player = function(scene, startPosition) {
 			}
 
 			if (add) {
-                for (var i=0; i<3; i++) {
+                for (var i=0; i<bodyParts; i++) {
                     var newBit = new THREE.Mesh(geometry, material);
                     newBit.position.x = head.position.x;
                     newBit.position.y = head.position.y;
@@ -183,7 +186,6 @@ var Player = function(scene, startPosition) {
 		dead = true;
 		
 		// Show game over box
-		$('#gameover span').html($('#score span').html());
 		$('#gameover').show('slow');
 	};
     

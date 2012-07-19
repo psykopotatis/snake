@@ -50,11 +50,11 @@ var squareLevel = function(scene) {
     
     // TODO Something so the snake and fruit get same position grid
     var validX = [];
-    for (var x=8; x<X_MAX; x=x+SNAKE.TILE_SIZE) {
+    for (var x=X_MIN; x<X_MAX; x=x+SNAKE.TILE_SIZE) {
         validX.push(x);
     }
     var validY = [];
-    for (var y=8; y<Y_MAX; y=y+SNAKE.TILE_SIZE) {
+    for (var y=Y_MIN; y<Y_MAX; y=y+SNAKE.TILE_SIZE) {
         validY.push(y);
     }
         

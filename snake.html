@@ -15,7 +15,7 @@
         canvas {
             background: #000;
         }
-		#score {
+		#info {
 			position: absolute;
 			color: #FFF;
 			padding: 10px;
@@ -55,11 +55,16 @@
     <script type="text/javascript" src="js/libs/RequestAnimationFrame.js"></script>	
     <script type="text/javascript" src="js/PlayerInput.js"></script>
     <script type="text/javascript" src="js/Player.js"></script>
-    <script type="text/javascript" src="js/Fruit.js"></script>
+    <script type="text/javascript" src="js/SmallSphere.js"></script>
     <script type="text/javascript" src="js/Planet.js"></script>
     <script type="text/javascript" src="js/StarField.js"></script>
-    <script type="text/javascript" src="js/SquareLevel.js"></script>
-    <script type="text/javascript" src="js/InfinityLevel.js"></script>
+    <script type="text/javascript" src="js/StarField2.js"></script>    
+    <script type="text/javascript" src="js/Screen.js"></script>
+    <script type="text/javascript" src="js/IntroScreen.js"></script>
+    <script type="text/javascript" src="js/Level1Screen.js"></script>
+    <script type="text/javascript" src="js/Level2Screen.js"></script>
+    <script type="text/javascript" src="js/LevelXScreen.js"></script>    
+    <script type="text/javascript" src="js/SnakeGame.js"></script>        
     <script type="text/javascript">
 		$(document).ready(function() {
 			// Check WebGL
@@ -68,216 +73,14 @@
 				return;
 			}
 			
-			$('#container').click(function() {
-				if (! started) {
-					$('#info').hide('slow');
-					$('#score').show();
-					startGame();
-				}				
-			});
-		
-			// Add Stats.js - https://github.com/mrdoob/stats.js
-			var stats = new Stats();
-			stats.domElement.style.position	= 'absolute';
-			stats.domElement.style.top = '0px';
-			stats.domElement.style.right = '5px';
-			document.body.appendChild(stats.domElement);
-			
-			var WIDTH = window.innerWidth - 5;
-			var HEIGHT = window.innerHeight - 5;
-			
-			// Create a WebGL renderer
-			var renderer = new THREE.WebGLRenderer({
-				antialias: true	// to get smoother output?
-			});
-			renderer.setSize(WIDTH, HEIGHT);
-			$('#container').append(renderer.domElement);
-			
-			// Set camera attributes
-			var VIEW_ANGLE = 45,
-				ASPECT = WIDTH / HEIGHT,
-				NEAR = 0.1,
-				FAR = 10000;
-			var CAMERA_POSITION = 250;
-			var TILE_SIZE = 4;
-			// Camera yo
-			var camera =
-			  new THREE.PerspectiveCamera(
-				VIEW_ANGLE,
-				ASPECT,
-				NEAR,
-				FAR);
-			// the camera starts at 0,0,0 so pull it back
-			camera.position.z = CAMERA_POSITION;		
-            camera.position.x = 15;	
-            camera.position.y = 10;
-				
-			// Height is 2 x since (0, 0) is in the middle of the screen
-			var DISPLAY_HEIGHT = 2 * CAMERA_POSITION * Math.tan(VIEW_ANGLE / 2 * (Math.PI / 180));
-			var DISPLAY_WIDTH = DISPLAY_HEIGHT * (WIDTH / HEIGHT);
-			
-			var X_MAX = DISPLAY_WIDTH / 2;
-			var X_MIN = 0 - (DISPLAY_WIDTH / 2);
-			var Y_MAX = DISPLAY_HEIGHT / 2;
-			var Y_MIN = 0 - (DISPLAY_HEIGHT / 2);
-			
-			// Global vars
-			SNAKE = {};
-			SNAKE.DISPLAY_WIDTH = DISPLAY_WIDTH;
-			SNAKE.DISPLAY_HEIGHT = DISPLAY_HEIGHT;
-			SNAKE.X_MAX = X_MAX;
-			SNAKE.X_MIN = X_MIN;
-			SNAKE.Y_MAX = Y_MAX;
-			SNAKE.Y_MIN = Y_MIN;
-            SNAKE.TILE_SIZE = 4;
-		
-			// Create foggy scene
-			var scene = new THREE.Scene();
-            camera.lookAt(scene.position);  // Look at scene bit from side
-			scene.fog = new THREE.FogExp2( 0x000000, 0.0011);
-			
-			// Add the camera to the scene
-			scene.add(camera);
-	
-			// Create point light
-			var pointLight = new THREE.PointLight(0xFFFFFF);
-			// set its position
-			pointLight.position.x = 10;
-			pointLight.position.y = 50;
-			pointLight.position.z = 130;
-			// add to the scene
-			scene.add(pointLight);
-			
-			// Moar lights!
-			var light = new THREE.DirectionalLight(Math.random() * 0xffffff);
-			light.position.set(Math.random(), Math.random(), Math.random()).normalize();
-			scene.add(light);
-			var light = new THREE.DirectionalLight(Math.random() * 0xffffff);
-			light.position.set(Math.random(), Math.random(), Math.random()).normalize();
-			scene.add(light);
-			
-			// Draw a partial white grid
-			var gridMaterial = new THREE.LineBasicMaterial({
-				color: 0xffffff,
-				opacity: 0.2
-			});
-			// Horizontal lines
-			var x_geometry = new THREE.Geometry();
-			x_geometry.vertices.push(new THREE.Vector3(X_MIN, 0, 0));
-			x_geometry.vertices.push(new THREE.Vector3(X_MAX, 0, 0));
-			for (var y=2; y<Y_MAX; y=y+TILE_SIZE) {
-				var line = new THREE.Line(x_geometry, gridMaterial);
-				line.position.y = y;
-				scene.add(line);
-			}
-			// Vertical lines
-			var y_geometry = new THREE.Geometry();
-			y_geometry.vertices.push(new THREE.Vector3(0, Y_MAX, 0));
-			y_geometry.vertices.push(new THREE.Vector3(0, Y_MIN, 0));
-			for (var x=2; x<X_MAX; x=x+TILE_SIZE) {
-				var line = new THREE.Line(y_geometry, gridMaterial);
-				line.position.x = x;
-				scene.add(line);
-			}	
-			
-			// Initialize all game components
-			var stars = starField(scene);
-			var level = squareLevel(scene);
-			var started = false;
-			
-			// For camera movement
-			var mouseX;
-			var mouseY;
-			var moveCamera = false;			
-			$('canvas').mousemove(function() {
-				mouseX = event.clientX - (WIDTH/2);
-				mouseY = event.clientY - (HEIGHT/2);
-			});
-			$('canvas').mousedown(function() {
-					document.body.style.cursor = "move";
-					moveCamera = true;
-					return false;  // Disable text selection on the canvas
-				});
-			$('canvas').mouseup(function() {
-				document.body.style.cursor = "default";
-				moveCamera = false;
-			});
-			var mouseWheel = 0;
-			$('canvas').mousewheel(function(objEvent, intDelta){
-			    mouseWheel += intDelta;
-			});
-			
-			/*
-			* Start game
-			*/
-			var startGame = function() {
-				started = true;
-				requestAnimationFrame(update);
-			};
-			
-			/*
-			* Pad zeros. (1123, 9) Returns 000001123
-			*/
-			var zeroPad = function(num, places) {
-				var zero = places - num.toString().length + 1;
-				return Array(+(zero > 0 && zero)).join("0") + num;
-			}
-			
-			/*
-			* Update
-			*/
-			var update = function() {							
-				requestAnimationFrame(update);
-			
-				stars.update();
-                level.update();
-
-				// Move camera
-				if (moveCamera) {
-					camera.position.x += (mouseX - camera.position.x) * 0.01;
-					camera.position.y += (- mouseY - camera.position.y) * 0.01;
-					camera.lookAt(scene.position);
-				}
-				camera.position.z = CAMERA_POSITION + mouseWheel;
-
-				renderer.render(scene, camera);
-				stats.update();
-			};
-			
-			// Restart game
-			$('#gameover a').click(function() {
-				$('#gameover').hide('slow');
-				
-				// Reset score
-				points = 0;
-				$('#score span').html(zeroPad(points, 9));
-
-				// Remove player and fruit
-				var length = scene.children.length;
-				var removeMe = [];
-				for (var i=0; i<length; i++) {
-					var child = scene.children[i];
-					if (child instanceof THREE.Mesh) {
-						removeMe.push(child);
-					}
-				}
-				for (var i=0; i<removeMe.length; i++) {
-					scene.remove(removeMe[i]);
-				}
-				
-                level.restart();
-			});
+            startGame();
         });
     </script>
 </head>
 	<body>
         <div id="outer">
-            <div id="score" class="hidden">
-                Score: <span>000000000</span><br />
-                <br />
-                Goal: <span id="goal"></span>
-            </div>
-            <div id="info" class="box">
+        
+            <div id="intro" class="box">
                 WebGL Snake<br /><br/ >
                 Eat the planets and avoid colliding <br />
                 with self or walls.<br />
@@ -285,15 +88,23 @@
                 Camera: Click and drag to move camera.<br />
                 Mouse wheel to zoom in/out.
                 <br /><br />
-                Click outside this box to play! ^__^
+                <a href="javascript:;">PLAY!</a> ^__^
                 <br /><br /><br />
                 Made with <a href="https://github.com/mrdoob/three.js/">three.js</a>
             </div>
+
+            <div id="info" class="hidden">
+                <span class="level">Level 1</span> - Score: <span class="score">000000000</span><br />
+                <br />
+                Goal: <span id="goal"></span>
+            </div>
+
             <div id="gameover" class="box hidden">
                 GAME OVER!<br /><br />
-                Final score: <strong><span></span></strong><br /><br /><br />
+                Final score: <strong><span class="score"></span></strong><br /><br /><br />
                 <a href="javascript:;">Play again?</a>
             </div>
+
             <div id="done" class="box hidden">
                 Woop woop! :D
             </div>
