@@ -125,6 +125,7 @@ var screen = function(game, scene) {
 /*
 * Enable super method calls.
 */
+/*
 Object.method('superior', function(name) {
     var that = this;
     var method = that[name];
@@ -132,3 +133,4 @@ Object.method('superior', function(name) {
         method.apply(that, argruments);
     };
 });
+*/

@@ -1,4 +1,4 @@
-var Player = function(scene, startPosition) {
+var player = function(scene, startPosition) {
     var that = {};
 
     var UP = 0;

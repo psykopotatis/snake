@@ -1,12 +1,17 @@
-var planet = function(scene) {
+var sphere = function(options) {
     var that = {};
+    var scene = options.scene;
+    var r = options.radius || Math.random * 20 + 5;
+    var mesh = options.mesh || false;
+    var x = options.x;
+    var y = options.y;
+    var rotation = options.rotation || 0.005;
 	
 	/*
 	* Creates random sized, colored sphere
 	*/	
 	var createSphere = function() {
-		var radius = Math.random() * 20 + 5;  // Mininum radius = 5
-		var position = getRandomPosition(radius);
+		var radius = r;
 		var segments = 30;
 		var rings = 30;
 		var color24 = Math.random()*255 << 16 | Math.random()*255 << 8 | Math.random()*255;
@@ -14,7 +19,7 @@ var planet = function(scene) {
 		var sphereMaterial =
 			new THREE.MeshLambertMaterial({
 				color: color24,
-				wireframe: (Math.random() > 0.50 ? true : false)  // 50 % get wire frame
+				wireframe: mesh
 			});
 				
 		var sphere = new THREE.Mesh(
@@ -24,8 +29,8 @@ var planet = function(scene) {
 				rings),
 			sphereMaterial);
 			
-		sphere.position.x = position.x;
-		sphere.position.y = position.y;
+		sphere.position.x = x;
+		sphere.position.y = y;
 		sphere.radius = radius;
 		
 		scene.add(sphere);
@@ -34,7 +39,7 @@ var planet = function(scene) {
 	};
 	
 	/*
-	* Returns random (x, y) position minus fruit radius
+	* Returns random (x, y) position minus sphere radius
 	*/
 	var getRandomPosition = function(radius) {
 		var x = Math.floor(Math.random() * ((SNAKE.DISPLAY_WIDTH-radius)/2)) * (Math.random() > 0.5 ? -1 : 1);
@@ -44,34 +49,34 @@ var planet = function(scene) {
 	};
 	
 	/*
-	* Moves fruit to random (x, y) position
+	* Moves sphere to random (x, y) position
 	*/	
-	var moveFruit = function() {
-		var pos = getRandomPosition(fruit.radius);
+	var moveSphere = function() {
+		var pos = getRandomPosition(sphere.radius);
 		
-		fruit.position.x = pos.x;
-		fruit.position.y = pos.y;
+		sphere.position.x = pos.x;
+		sphere.position.y = pos.y;
 	};
 	
 	/*
-	* Creates a new fresh fruit
+	* Creates a new sphere
 	*/	
 	that.refresh = function() {
-		fruit = createSphere();
+		sphere = createSphere();
 	};
 			
 	/*
 	* Update
 	*/	
     that.update = function() {
-		fruit.rotation.y += 0.01;
+		sphere.rotation.y += rotation;
     };
 	
-	that.getPosition = function() { return fruit.position; }
-	that.getRadius = function() { return fruit.radius; }
-	that.getMesh = function() { return fruit; }
+	that.getPosition = function() { return sphere.position; }
+	that.getRadius = function() { return sphere.radius; }
+	that.getMesh = function() { return sphere; }
 	
-	var fruit = createSphere();
+	var sphere = createSphere();
 	
     return that;
 };

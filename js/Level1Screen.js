@@ -14,7 +14,7 @@ var level1Screen = function(game, scene) {
     var fruitsToEat = 15;  // Level goal
     var levelFinished;
 
-    var superGetName = that.superior('getName');
+    // var superGetName = that.superior('getName');
     
     var initializeLevel = function() {
         // Show score board in upper left corner
@@ -31,7 +31,6 @@ var level1Screen = function(game, scene) {
         updateLevelGoal();
         levelFinished = false;
         $('#info .level').html('Level 1');
-        alert(superGetName() + " 1");
     };
     
     var updateLevelGoal = function() {

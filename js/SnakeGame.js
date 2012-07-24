@@ -105,7 +105,10 @@ var startGame = function() {
         scene.add(line);
     }
     
-    // Camera movement
+    $('#intro').show();
+    
+    /*
+    // Camera movement <------------------------- Disabled! 
     var mouseX;
     var mouseY;
     var mouseWheel = 0;    
@@ -130,10 +133,9 @@ var startGame = function() {
     $('canvas').mousewheel(function(objEvent, intDelta){
         mouseWheel += intDelta;
     });
+    */
     
-    
-    var stars = starField2(scene);
-    var screen = introScreen(that, scene);
+    var screen = new IntroScreen(that, scene, camera);
     
     that.setScreen = function(newScreen) {
         screen = newScreen;
@@ -141,7 +143,7 @@ var startGame = function() {
     
     var nextScreen = function() {
         $('#gameover').hide('slow');
-        that.setScreen(level1Screen(that, scene));    
+        that.setScreen(new GameScreen(that, scene, camera));    
     };
     
     $('#gameover a').click(function() {
@@ -152,10 +154,10 @@ var startGame = function() {
     var update = function() {							
         requestAnimationFrame(update);
         
-        stars.update();
         screen.update();
 
-        // Move camera
+        /*
+        // Move camera   <----------------------- disabled!
         if (moveCamera) {
             camera.position.x += (mouseX - camera.position.x) * 0.01;
             camera.position.y += (- mouseY - camera.position.y) * 0.01;
@@ -164,6 +166,7 @@ var startGame = function() {
         
         // Zoom camera
         camera.position.z = CAMERA_POSITION + mouseWheel;
+        */
         
         renderer.render(scene, camera);        
         stats.update();

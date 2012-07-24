@@ -1,12 +1,12 @@
 /*
-* Creates 30.000 random placed, rotating color-changing particles.
+* Creates random placed, rotating color-changing particles.
 */	
-var starField2 = function(scene) {
+var introStarField = function(scene) {
     var that = {};
 	
 	var geometry = new THREE.Geometry();
 			
-	for (i=0; i<30000; i++) {
+	for (i=0; i<50000; i++) {
 		var vertex = new THREE.Vector3();
 		vertex.x = Math.random() * 2000 - 1000;
 		vertex.y = Math.random() * 2000 - 1000;
@@ -14,7 +14,7 @@ var starField2 = function(scene) {
 		geometry.vertices.push(vertex);
 	}
 	
-	var material = new THREE.ParticleBasicMaterial({size: 2});
+	var material = new THREE.ParticleBasicMaterial({size: 3});
 	material.color.setHSV(1, 1, 1);
 
 	var particles = new THREE.ParticleSystem(geometry, material);

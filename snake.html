@@ -53,17 +53,16 @@
     <script type="text/javascript" src="js/libs/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="js/libs/mouseWheel.js"></script>
     <script type="text/javascript" src="js/libs/RequestAnimationFrame.js"></script>	
+    <script type="text/javascript" src="js/libs/SimpleJavascriptInheritance.js"></script>	
     <script type="text/javascript" src="js/PlayerInput.js"></script>
     <script type="text/javascript" src="js/Player.js"></script>
     <script type="text/javascript" src="js/SmallSphere.js"></script>
-    <script type="text/javascript" src="js/Planet.js"></script>
-    <script type="text/javascript" src="js/StarField.js"></script>
-    <script type="text/javascript" src="js/StarField2.js"></script>    
-    <script type="text/javascript" src="js/Screen.js"></script>
-    <script type="text/javascript" src="js/IntroScreen.js"></script>
-    <script type="text/javascript" src="js/Level1Screen.js"></script>
-    <script type="text/javascript" src="js/Level2Screen.js"></script>
-    <script type="text/javascript" src="js/LevelXScreen.js"></script>    
+    <script type="text/javascript" src="js/Sphere.js"></script>
+    <script type="text/javascript" src="js/StarField.js"></script>    
+    <script type="text/javascript" src="js/IntroStarField.js"></script>        
+    <script type="text/javascript" src="js/screen/IntroScreen.js"></script>
+    <script type="text/javascript" src="js/screen/GameScreen.js"></script>
+    <script type="text/javascript" src="js/screen/EndScreen.js"></script>
     <script type="text/javascript" src="js/SnakeGame.js"></script>        
     <script type="text/javascript">
 		$(document).ready(function() {
@@ -80,13 +79,11 @@
 	<body>
         <div id="outer">
         
-            <div id="intro" class="box">
-                WebGL Snake<br /><br/ >
+            <div id="intro" class="box hidden">
+                <strong>WebGL Snake</strong><br /><br/ >
                 Eat the planets and avoid colliding <br />
                 with self or walls.<br />
                 Controls: WASD or arrows up/down/left/right.<br />
-                Camera: Click and drag to move camera.<br />
-                Mouse wheel to zoom in/out.
                 <br /><br />
                 <a href="javascript:;">PLAY!</a> ^__^
                 <br /><br /><br />
